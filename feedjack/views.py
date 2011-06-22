@@ -11,7 +11,7 @@ from django.utils import feedgenerator
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.utils.cache import patch_vary_headers
-from django.template import RequestContxt, Context, loader
+from django.template import RequestContext, Context, loader
 
 from feedjack import models
 from feedjack import fjlib
