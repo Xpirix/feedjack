@@ -11,7 +11,7 @@ from django.utils import feedgenerator
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.utils.cache import patch_vary_headers
-from django.template import Context, loader
+from django.template import RequestContxt, Context, loader
 
 from feedjack import models
 from feedjack import fjlib
@@ -138,6 +138,10 @@ def mainview(request, tag=None, user=None):
 
     ctx = fjlib.page_context(request, site, tag, user, (sfeeds_obj, \
       sfeeds_ids))
+
+    # we need a request context to apply the context template 
+    # processors (i.e. static files)
+    ctx = RequestContext(request, ctx)
 
     response = render_to_response('feedjack/%s/post_list.html' % \
       (site.template), ctx)
