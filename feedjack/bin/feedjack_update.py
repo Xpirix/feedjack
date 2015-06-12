@@ -454,6 +454,9 @@ def main():
     if options.settings:
         os.environ["DJANGO_SETTINGS_MODULE"] = options.settings
 
+    # ABP: fix error  The translation infrastructure cannot be initialized before the apps registry is ready. Check that you don't make non-lazy gettext calls at import time.
+    import django
+    django.setup()
 
     from feedjack import models, fjcache
 
