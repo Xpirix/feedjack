@@ -108,7 +108,7 @@ def buildfeed(request, feedclass, tag=None, user=None):
           pubdate = post.date_modified, \
           unique_id = post.link, \
           categories = [tag.name for tag in post.tags.all()])
-    response = HttpResponse(mimetype=feed.mime_type)
+    response = HttpResponse(content_type=feed.mime_type)
 
     # per host caching
     patch_vary_headers(response, ['Host'])
