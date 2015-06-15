@@ -53,7 +53,7 @@ def blogroll(request, btype):
     #
     #response = render_to_response('feedjack/%s.xml' % btype, \
     #  fjlib.get_extra_content(site, sfeeds_ids))
-    #response.mimetype = 'text/xml; charset=utf-8'
+    #response.content_type = 'text/xml; charset=utf-8'
     #
     # so we must use this:
 
@@ -62,7 +62,7 @@ def blogroll(request, btype):
     fjlib.get_extra_content(site, sfeeds_ids, ctx)
     ctx = Context(ctx)
     response = HttpResponse(template.render(ctx) , \
-      mimetype='text/xml; charset=utf-8')
+      content_type='text/xml; charset=utf-8')
 
 
     patch_vary_headers(response, ['Host'])
