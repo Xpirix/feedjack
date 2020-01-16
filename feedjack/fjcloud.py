@@ -28,7 +28,7 @@ def build(site, tagdata):
     """ Returns the tag cloud for a list of tags.
     """
     
-    tagdata.sort()
+    tagdata = sorted(tagdata)
 
     # we get the most popular tag to calculate the tags' weigth
     tagmax = 0

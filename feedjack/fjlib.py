@@ -8,9 +8,9 @@ fjlib.py
 
 from django.conf import settings
 from django.db import connection
-from django.core.paginator import Paginator, InvalidPage
+from django.core.paginator import Paginator, InvalidPage, PageNotAnInteger
 from django.http import Http404
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 
 from feedjack import models
 from feedjack import fjcache
@@ -25,16 +25,6 @@ class ObjectPaginator(Paginator):
     zero-based page number, whereas the new API (Paginator/Page) uses one-based
     page numbers.
     """
-    def __init__(self, query_set, num_per_page, orphans=0):
-        Paginator.__init__(self, query_set, num_per_page, orphans)
-        import warnings
-        warnings.warn("The ObjectPaginator is deprecated. Use django.core.paginator.Paginator instead.", DeprecationWarning)
-
-        # Keep these attributes around for backwards compatibility.
-        self.query_set = query_set
-        self.num_per_page = num_per_page
-        self._hits = self._pages = None
-
     def validate_page_number(self, page_number):
         try:
             page_number = int(page_number) + 1
@@ -50,7 +40,7 @@ class ObjectPaginator(Paginator):
         return self.page(page_number).object_list
 
     def has_next_page(self, page_number):
-        return page_number < self.pages - 1
+        return page_number < self.num_pages - 1
 
     def has_previous_page(self, page_number):
         return page_number > 0
@@ -61,7 +51,7 @@ class ObjectPaginator(Paginator):
         relative to total objects found (hits).
         """
         page_number = self.validate_page_number(page_number)
-        return (self.num_per_page * (page_number - 1)) + 1
+        return (self.per_page * (page_number - 1)) + 1
 
     def last_on_page(self, page_number):
         """
@@ -71,13 +61,21 @@ class ObjectPaginator(Paginator):
         page_number = self.validate_page_number(page_number)
         if page_number == self.num_pages:
             return self.count
-        return page_number * self.num_per_page
+        return page_number * self.per_page
+
+    @property
+    def hits(self):
+        return Paginator.count
+
+    @property
+    def pages(self):
+        return Paginator.num_pages
 
     # The old API called it "hits" instead of "count".
-    hits = Paginator.count
+    # hits = Paginator.count
 
     # The old API called it "pages" instead of "num_pages".
-    pages = Paginator.num_pages
+    # pages = Paginator.num_pages
 
 
 def sitefeeds(siteobj):
@@ -171,10 +169,10 @@ def get_posts_tags(object_list, sfeeds_obj, user_id, tag_name):
 def getcurrentsite(http_post, path_info, query_string):
     """ Returns the site id and the page cache key based on the request.
     """
-    url = u'http://%s/%s' % (smart_unicode(http_post.rstrip('/')), \
-      smart_unicode(path_info.lstrip('/')))
-    pagecachekey = '%s?%s' % (smart_unicode(path_info), \
-      smart_unicode(query_string))
+    url = u'http://%s/%s' % (smart_text(http_post.rstrip('/')), \
+      smart_text(path_info.lstrip('/')))
+    pagecachekey = '%s?%s' % (smart_text(path_info), \
+      smart_text(query_string))
     hostdict = fjcache.hostcache_get()
 
     if not hostdict:
@@ -259,15 +257,15 @@ def page_context(request, site, tag=None, user_id=None, sfeeds=None):
         user_obj, tag_obj = None, None
     ctx = {
         'object_list': object_list,
-        'is_paginated': paginator.pages > 1,
+        'is_paginated': paginator.num_pages > 1,
         'results_per_page': site.posts_per_page,
         'has_next': paginator.has_next_page(page),
         'has_previous': paginator.has_previous_page(page),
         'page': page + 1,
         'next': page + 1,
         'previous': page - 1,
-        'pages': paginator.pages,
-        'hits' : paginator.hits,
+        'pages': paginator.num_pages,
+        'hits' : paginator.count,
     }
     get_extra_content(site, sfeeds_ids, ctx)
     from feedjack import fjcloud

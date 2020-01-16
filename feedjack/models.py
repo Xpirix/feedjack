@@ -9,7 +9,7 @@ models.py
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _ 
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 
 from feedjack import fjcache
 
@@ -39,14 +39,12 @@ class Site(models.Model):
     url = models.CharField(_('url'),
       max_length=100,
       unique=True,
-      help_text=u'%s: %s, %s' % (smart_unicode(_('Example')),
+      help_text=u'%s: %s, %s' % (smart_text(_('Example')),
         u'http://www.planetexample.com',
         u'http://www.planetexample.com:8000/foo'))
     title = models.CharField(_('title'), max_length=200)
     description = models.TextField(_('description'))
     welcome = models.TextField(_('welcome'), null=True, blank=True)
-    greets = models.TextField(_('greets'), null=True, blank=True)
-
     default_site = models.BooleanField(_('default site'), default=False)
     posts_per_page = models.IntegerField(_('posts per page'), default=20)
     order_posts_by = models.IntegerField(_('order posts by'), default=1,
@@ -136,7 +134,7 @@ class Tag(models.Model):
         super(Tag, self).save()
 
 class Post(models.Model):
-    feed = models.ForeignKey(Feed, verbose_name=_('feed'), null=False, blank=False)
+    feed = models.ForeignKey(Feed, verbose_name=_('feed'), null=False, blank=False, on_delete=models.CASCADE)
     title = models.CharField(_('title'), max_length=255)
     link = models.URLField(_('link'), )
     content = models.TextField(_('content'), blank=True)
@@ -166,8 +164,8 @@ class Post(models.Model):
 
 
 class Subscriber(models.Model):
-    site = models.ForeignKey(Site, verbose_name=_('site') )
-    feed = models.ForeignKey(Feed, verbose_name=_('feed') )
+    site = models.ForeignKey(Site, verbose_name=_('site'), on_delete=models.CASCADE)
+    feed = models.ForeignKey(Feed, verbose_name=_('feed'), on_delete=models.CASCADE)
 
     name = models.CharField(_('name'), max_length=100, null=True, blank=True,
         help_text=_('Keep blank to use the Feed\'s original name.') )

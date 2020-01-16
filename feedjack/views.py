@@ -8,7 +8,8 @@ views.py
 
 
 from django.utils import feedgenerator
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
+from django.template.loader import render_to_string, get_template
 from django.http import HttpResponse
 from django.utils.cache import patch_vary_headers
 from django.template import RequestContext, Context, loader
@@ -141,11 +142,10 @@ def mainview(request, tag=None, user=None):
 
     # we need a request context to apply the context template 
     # processors (i.e. static files)
-    ctx = RequestContext(request, ctx)
+    # ctx = RequestContext(request, ctx)
 
-    response = render_to_response('feedjack/%s/post_list.html' % \
-      (site.template), ctx)
-    
+    response = render(request, 'feedjack/%s/post_list.html' % site.template, ctx)
+
     # per host caching, in case the cache middleware is enabled
     patch_vary_headers(response, ['Host'])
 
@@ -154,4 +154,3 @@ def mainview(request, tag=None, user=None):
     return response
 
 #~
-
