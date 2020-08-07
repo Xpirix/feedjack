@@ -192,8 +192,8 @@ class ProcessEntry:
                 # mtime or the current time
                 if self.fpf.feed.has_key('modified_parsed'):
                     date_modified = mtime(self.fpf.feed.modified_parsed)
-                elif self.fpf.has_key('modified'):
-                    date_modified = mtime(self.fpf.modified)
+                elif self.fpf.has_key('modified_parsed'):
+                    date_modified = mtime(self.fpf.modified_parsed)
             if not date_modified:
                 date_modified = datetime.datetime.now()
             tobj = models.Post(feed=self.feed, title=title, link=link,
@@ -276,7 +276,7 @@ class ProcessFeed:
             self.feed.etag = ''
 
         try:
-            self.feed.last_modified = mtime(self.fpf.modified)
+            self.feed.last_modified = mtime(self.fpf.modified_parsed)
         except:
             pass
         
