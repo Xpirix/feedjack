@@ -315,10 +315,10 @@ class ProcessFeed:
                 ret_entry = self.process_entry(entry, postdict)
             except:
                 (etype, eobj, etb) = sys.exc_info()
-                print '[%d] ! -------------------------' % (self.feed.id,)
-                print traceback.format_exception(etype, eobj, etb)
+                print('[%d] ! -------------------------' % (self.feed.id,))
+                print(traceback.format_exception(etype, eobj, etb))
                 traceback.print_exception(etype, eobj, etb)
-                print '[%d] ! -------------------------' % (self.feed.id,)
+                print('[%d] ! -------------------------' % (self.feed.id,))
                 ret_entry = ENTRY_ERR
             ret_values[ret_entry] += 1
 
@@ -381,10 +381,10 @@ class Dispatcher:
             del pfeed
         except:
             (etype, eobj, etb) = sys.exc_info()
-            print '[%d] ! -------------------------' % (feed.id,)
-            print traceback.format_exception(etype, eobj, etb)
+            print('[%d] ! -------------------------' % (feed.id,))
+            print(traceback.format_exception(etype, eobj, etb))
             traceback.print_exception(etype, eobj, etb)
-            print '[%d] ! -------------------------' % (feed.id,)
+            print('[%d] ! -------------------------' % (feed.id,))
             ret_feed = FEED_ERREXC
             ret_entries = {}
 
@@ -394,7 +394,7 @@ class Dispatcher:
         else:
             comment = u''
         prints(u'[%d] Processed %s in %s [%s] [%s]%s' % (
-            feed.id, feed.feed_url, unicode(delta),
+            feed.id, feed.feed_url, delta,
             self.feed_trans[ret_feed],
             u' '.join(u'%s=%d' % (self.entry_trans[key],
                       ret_entries[key]) for key in self.entry_keys),
@@ -421,7 +421,7 @@ class Dispatcher:
                 break
             except threadpool.NoResultsPending:
                 prints(u'* DONE in %s\n* Feeds: %s\n* Entries: %s' % (
-                    unicode(datetime.datetime.now() - self.time_start),
+                    datetime.datetime.now() - self.time_start,
                     u' '.join(u'%s=%d' % (self.feed_trans[key],
                               self.feed_stats[key])
                               for key in self.feed_keys),
@@ -465,7 +465,7 @@ def main():
     # our job dispatcher
     disp = Dispatcher(options, options.workerthreads)
     
-    prints('* BEGIN: %s' % (unicode(datetime.datetime.now()),))
+    prints('* BEGIN: %s' % (datetime.datetime.now(),))
 
     if options.feed:
         feeds = models.Feed.objects.filter(id__in=options.feed)
@@ -501,7 +501,7 @@ def main():
     else:
         tcom = u'no threadpool module available, no parallel fetching'
 
-    prints('* END: %s (%s)' % (unicode(datetime.datetime.now()), tcom))
+    prints('* END: %s (%s)' % ((datetime.datetime.now()), tcom))
 
 
 class Command(BaseCommand):
