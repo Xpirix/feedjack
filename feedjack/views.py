@@ -8,7 +8,7 @@ views.py
 
 
 from django.utils import feedgenerator
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render
 from django.template.loader import render_to_string, get_template
 from django.http import HttpResponse
 from django.utils.cache import patch_vary_headers
@@ -49,14 +49,6 @@ def blogroll(request, btype):
     response, site, cachekey, sfeeds_obj, sfeeds_ids = initview(request)
     if response:
         return response
-
-    # for some reason this isn't working:
-    #
-    #response = render_to_response('feedjack/%s.xml' % btype, \
-    #  fjlib.get_extra_content(site, sfeeds_ids))
-    #response.content_type = 'text/xml; charset=utf-8'
-    #
-    # so we must use this:
 
     template = loader.get_template('feedjack/%s.xml' % btype)
     ctx = {}
