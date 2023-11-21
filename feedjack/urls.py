@@ -15,7 +15,7 @@ from feedjack import views
 
 urlpatterns = [
     url(r'^rss20.xml$', RedirectView.as_view(url='/feed/rss/')),
-    url(r'^feed/$', RedirectView,
+    url(r'^feed/$', RedirectView.as_view(),
       {'url':'/feed/atom/'}),
     url(r'^feed/rss/$', views.rssfeed),
     url(r'^feed/atom/$', views.atomfeed),
