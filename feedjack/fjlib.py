@@ -10,7 +10,7 @@ from django.conf import settings
 from django.db import connection
 from django.core.paginator import Paginator, InvalidPage, PageNotAnInteger
 from django.http import Http404
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str as smart_text
 
 from feedjack import models
 from feedjack import fjcache
